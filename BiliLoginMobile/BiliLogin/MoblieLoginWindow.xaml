@@ -1,12 +1,12 @@
-﻿<Window x:Class="BiliLoginMobile.LoginWindow"
+﻿<Window x:Class="BiliLogin.MoblieLoginWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:BiliLoginMobile"
+        xmlns:local="clr-namespace:BiliLogin"
         mc:Ignorable="d"
         xmlns:gif="clr-namespace:WpfAnimatedGif"
-        Title="BiliLoginMobile" Height="512" Width="452" BorderThickness="16" WindowStyle="None" AllowsTransparency="True" Background="Transparent" ResizeMode="CanMinimize" Topmost="True" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" Loaded="Window_Loaded">
+        Title="MoblieLoginWindow" Height="512" Width="452" BorderThickness="16" WindowStyle="None" AllowsTransparency="True" Background="Transparent" ResizeMode="CanMinimize" Topmost="True" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" Loaded="Window_Loaded">
     <Window.Effect>
         <DropShadowEffect ShadowDepth="1" BlurRadius="16" Direction="270" Opacity="0.5" Color="#FF211613"/>
     </Window.Effect>

@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 
-namespace BiliLoginMobile
+namespace BiliLogin
 {
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
@@ -16,16 +16,15 @@ namespace BiliLoginMobile
             InitializeComponent();
         }
 
-        LoginWindow loginWindow;
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            loginWindow = new LoginWindow();
+            MoblieLoginWindow loginWindow = new MoblieLoginWindow();
             loginWindow.LoggedIn += LoginWindow_LoggedIn;
             loginWindow.ConnectionFailed += LoginWindow_ConnectionFailed;
             loginWindow.Show();
         }
 
-        private void LoginWindow_LoggedIn(CookieCollection cookies)
+        private void LoginWindow_LoggedIn(MoblieLoginWindow sender, CookieCollection cookies)
         {
             StringBuilder stringBuilder = new StringBuilder();
             foreach (Cookie c in cookies)
@@ -34,13 +33,13 @@ namespace BiliLoginMobile
             }
             Dispatcher.Invoke(new Action(() =>
             {
-                loginWindow.Close();
+                sender.Close();
                 LoginInfoBox.Text = stringBuilder.ToString();
             }));
             
         }
 
-        private void LoginWindow_ConnectionFailed(LoginWindow sender, WebException ex)
+        private void LoginWindow_ConnectionFailed(MoblieLoginWindow sender, WebException ex)
         {
             new Thread(delegate ()
             {

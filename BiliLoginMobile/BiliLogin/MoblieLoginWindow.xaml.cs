@@ -5,20 +5,20 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
-namespace BiliLoginMobile
+namespace BiliLogin
 {
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class LoginWindow : Window
+    public partial class MoblieLoginWindow : Window
     {
-        public delegate void LoggedInDel(CookieCollection cookies);
+        public delegate void LoggedInDel(MoblieLoginWindow sender, CookieCollection cookies);
         public event LoggedInDel LoggedIn;
 
-        public delegate void ConnectionFailedDel(LoginWindow sender, WebException ex);
+        public delegate void ConnectionFailedDel(MoblieLoginWindow sender, WebException ex);
         public event ConnectionFailedDel ConnectionFailed;
 
-        public LoginWindow()
+        public MoblieLoginWindow()
         {
             InitializeComponent();
         }
@@ -60,7 +60,7 @@ namespace BiliLoginMobile
 
         private void BiliLoginQR_LoggedIn(CookieCollection cookies)
         {
-            LoggedIn?.Invoke(cookies);
+            LoggedIn?.Invoke(this, cookies);
         }
 
         private void BiliLoginQR_ConnectionFailed(BiliLoginQR sender, WebException ex)
