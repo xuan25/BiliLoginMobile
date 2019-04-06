@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,19 +22,17 @@ namespace BiliLoginMobile
     /// </summary>
     public partial class LoginWindow : Window
     {
+        public delegate void LoggedInDel(CookieCollection cookies);
+        public event LoggedInDel LoggedIn;
+
         public LoginWindow()
         {
             InitializeComponent();
         }
 
-        private void ContentGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-
-        }
-
-        private void ContentGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-
+            RefreshQRCode();
         }
 
         private void ContentGrid_MouseMove(object sender, MouseEventArgs e)
@@ -48,7 +48,32 @@ namespace BiliLoginMobile
 
         private void ReloadBtn_Click(object sender, RoutedEventArgs e)
         {
+            RefreshQRCode();
+        }
 
+        public void RefreshQRCode()
+        {
+            BiliLoginQR biliLoginQR = new BiliLoginQR(this);
+            biliLoginQR.QRImageLoaded += BiliLoginQR_QRImageLoaded;
+            biliLoginQR.LoggedIn += BiliLoginQR_LoggedIn;
+            biliLoginQR.Begin();
+        }
+
+        private void BiliLoginQR_QRImageLoaded(Bitmap qrImage)
+        {
+            QrImageBox.Source = BitmapToImageSource(qrImage);
+        }
+
+        private void BiliLoginQR_LoggedIn(CookieCollection cookies)
+        {
+            LoggedIn?.Invoke(cookies);
+        }
+
+        private BitmapSource BitmapToImageSource(Bitmap bitmap)
+        {
+            IntPtr ip = bitmap.GetHbitmap();
+            BitmapSource bitmapSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(ip, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            return bitmapSource;
         }
     }
 }

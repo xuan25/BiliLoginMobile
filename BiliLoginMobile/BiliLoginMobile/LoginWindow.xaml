@@ -6,11 +6,11 @@
         xmlns:local="clr-namespace:BiliLoginMobile"
         mc:Ignorable="d"
         xmlns:gif="clr-namespace:WpfAnimatedGif"
-        Title="BiliLoginMobile" Height="512" Width="452" BorderThickness="16" WindowStyle="None" AllowsTransparency="True" Background="Transparent" ResizeMode="CanMinimize" Topmost="True" ShowInTaskbar="False">
+        Title="BiliLoginMobile" Height="512" Width="452" BorderThickness="16" WindowStyle="None" AllowsTransparency="True" Background="Transparent" ResizeMode="CanMinimize" Topmost="True" ShowInTaskbar="False" Loaded="Window_Loaded">
     <Window.Effect>
         <DropShadowEffect ShadowDepth="1" BlurRadius="16" Direction="270" Opacity="0.5" Color="#FF211613"/>
     </Window.Effect>
-    <Grid x:Name="ContentGrid" MouseLeftButtonDown="ContentGrid_MouseLeftButtonDown" MouseLeftButtonUp="ContentGrid_MouseLeftButtonUp" MouseMove="ContentGrid_MouseMove">
+    <Grid x:Name="ContentGrid" Height="480" Width="420" MouseMove="ContentGrid_MouseMove">
         <Grid.OpacityMask>
             <DrawingBrush>
                 <DrawingBrush.Drawing>
@@ -96,9 +96,10 @@
                 <RowDefinition Height="60"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Image Grid.Column="1" Grid.Row="0" x:Name="QrImageBox" gif:ImageBehavior.AnimatedSource="img/loadTV.gif" Stretch="None" Width="140" Height="140"/>
+            <Image Grid.Column="1" Grid.Row="0" gif:ImageBehavior.AnimatedSource="img/loadTV.gif" Stretch="None" Width="140" Height="140"/>
+            <Image Grid.Column="1" Grid.Row="0" x:Name="QrImageBox" Stretch="Fill" Width="140" Height="140"/>
             <TextBlock Grid.Column="1" Grid.Row="1" Text="扫 描 二 维 码 登 录" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-            <TextBlock Grid.Column="1" Grid.Row="2"  FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center">
+            <TextBlock Grid.Column="1" Grid.Row="2" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center">
                 <Run Text="请使用哔哩哔哩客户端"/>
                 <LineBreak/>
                 <Run Text="扫码登录"/>
