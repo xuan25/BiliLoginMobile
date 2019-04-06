@@ -1,19 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace BiliLoginMobile
 {
@@ -24,6 +14,9 @@ namespace BiliLoginMobile
     {
         public delegate void LoggedInDel(CookieCollection cookies);
         public event LoggedInDel LoggedIn;
+
+        public delegate void ConnectionFailedDel(LoginWindow sender, WebException ex);
+        public event ConnectionFailedDel ConnectionFailed;
 
         public LoginWindow()
         {
@@ -56,6 +49,7 @@ namespace BiliLoginMobile
             BiliLoginQR biliLoginQR = new BiliLoginQR(this);
             biliLoginQR.QRImageLoaded += BiliLoginQR_QRImageLoaded;
             biliLoginQR.LoggedIn += BiliLoginQR_LoggedIn;
+            biliLoginQR.ConnectionFailed += BiliLoginQR_ConnectionFailed;
             biliLoginQR.Begin();
         }
 
@@ -67,6 +61,11 @@ namespace BiliLoginMobile
         private void BiliLoginQR_LoggedIn(CookieCollection cookies)
         {
             LoggedIn?.Invoke(cookies);
+        }
+
+        private void BiliLoginQR_ConnectionFailed(BiliLoginQR sender, WebException ex)
+        {
+            ConnectionFailed?.Invoke(this, ex);
         }
 
         private BitmapSource BitmapToImageSource(Bitmap bitmap)

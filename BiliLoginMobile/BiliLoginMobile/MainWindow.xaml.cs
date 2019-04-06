@@ -1,17 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace BiliLoginMobile
 {
@@ -30,10 +21,11 @@ namespace BiliLoginMobile
         {
             loginWindow = new LoginWindow();
             loginWindow.LoggedIn += LoginWindow_LoggedIn;
+            loginWindow.ConnectionFailed += LoginWindow_ConnectionFailed;
             loginWindow.Show();
         }
 
-        private void LoginWindow_LoggedIn(System.Net.CookieCollection cookies)
+        private void LoginWindow_LoggedIn(CookieCollection cookies)
         {
             StringBuilder stringBuilder = new StringBuilder();
             foreach (Cookie c in cookies)
@@ -46,6 +38,18 @@ namespace BiliLoginMobile
                 LoginInfoBox.Text = stringBuilder.ToString();
             }));
             
+        }
+
+        private void LoginWindow_ConnectionFailed(LoginWindow sender, WebException ex)
+        {
+            new Thread(delegate ()
+            {
+                MessageBox.Show("网络错误", "登录", MessageBoxButton.OK);
+                Dispatcher.Invoke(new Action(() =>
+                {
+                    sender.Close();
+                }));
+            }).Start();
         }
     }
 }
