@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:BiliLoginMobile"
         mc:Ignorable="d"
         xmlns:gif="clr-namespace:WpfAnimatedGif"
-        Title="BiliLoginMobile" Height="512" Width="452" BorderThickness="16" WindowStyle="None" AllowsTransparency="True" Background="Transparent" ResizeMode="CanMinimize" Topmost="True" ShowInTaskbar="False" Loaded="Window_Loaded">
+        Title="BiliLoginMobile" Height="512" Width="452" BorderThickness="16" WindowStyle="None" AllowsTransparency="True" Background="Transparent" ResizeMode="CanMinimize" Topmost="True" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" Loaded="Window_Loaded">
     <Window.Effect>
         <DropShadowEffect ShadowDepth="1" BlurRadius="16" Direction="270" Opacity="0.5" Color="#FF211613"/>
     </Window.Effect>
