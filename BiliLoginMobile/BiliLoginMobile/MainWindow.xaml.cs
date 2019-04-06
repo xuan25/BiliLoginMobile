@@ -44,6 +44,10 @@ namespace BiliLoginMobile
         {
             new Thread(delegate ()
             {
+                Dispatcher.Invoke(new Action(() =>
+                {
+                    sender.Topmost = false;
+                }));
                 MessageBox.Show("网络错误", "登录", MessageBoxButton.OK);
                 Dispatcher.Invoke(new Action(() =>
                 {
