@@ -152,6 +152,7 @@
                     </Button.Content>
                 </Button>
             </Grid>
+            <TextBlock Grid.Column="1" Grid.Row="1" Text="二 维 码 登 录 已 失 效" Background="#FFFFFFFF" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Top" Visibility="{Binding ElementName=ReloadGrid, Path=Visibility}"/>
             <Button Grid.Column="1" Grid.Row="3" x:Name="ExitBtn" Content="返回" FontSize="12" Foreground="#FFFFFFFF" Width="330" Height="38" HorizontalAlignment="Center" VerticalAlignment="Bottom" Padding="0" BorderThickness="0" Click="CloseBtn_Click">
                 <Button.Style>
                     <Style TargetType="Button">
