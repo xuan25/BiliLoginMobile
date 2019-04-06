@@ -39,7 +39,7 @@ namespace BiliLogin
         {
             try
             {
-                WebRequest request = WebRequest.Create("https://passport.bilibili.com/qrcode/getLoginUrl");
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://passport.bilibili.com/qrcode/getLoginUrl");
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 Stream dataStream = response.GetResponseStream();
                 StreamReader reader = new StreamReader(dataStream);

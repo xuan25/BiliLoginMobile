@@ -67,6 +67,7 @@
     <Compile Include="QRCoder\QRCode.cs" />
     <Compile Include="QRCoder\QRCodeData.cs" />
     <Compile Include="QRCoder\QRCodeGenerator.cs" />
+    <Compile Include="UserInfo.cs" />
     <Compile Include="WpfAnimatedGif\AnimationCache.cs" />
     <Compile Include="WpfAnimatedGif\Decoding\GifApplicationExtension.cs" />
     <Compile Include="WpfAnimatedGif\Decoding\GifBlock.cs" />

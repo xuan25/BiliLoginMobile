@@ -5,10 +5,29 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BiliLogin"
         mc:Ignorable="d"
-        Title="MainWindow" Height="479.212" Width="592.437">
+        Title="BiliLoginDemo" Height="443" Width="350" ResizeMode="NoResize">
     <Grid>
-        <Button Content="登录" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,34,0,0" TextWrapping="Wrap" Text="登录凭据:" VerticalAlignment="Top"/>
-        <TextBlock x:Name="LoginInfoBox" HorizontalAlignment="Left" Margin="10,54,0,0" Width="310" Height="80" TextWrapping="Wrap" Text="" VerticalAlignment="Top"/>
+        <Button Content="登录" HorizontalAlignment="Left" Margin="249,375,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="用户信息:" VerticalAlignment="Top"/>
+        <Grid Height="168" Width="168" Margin="10,30,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
+            <Image x:Name="UserFaceImage" HorizontalAlignment="Left" Height="96" Margin="36" VerticalAlignment="Top" Width="96" Stretch="Fill">
+                <Image.OpacityMask>
+                    <DrawingBrush>
+                        <DrawingBrush.Drawing>
+                            <GeometryDrawing Brush="#FFFFFFFF">
+                                <GeometryDrawing.Geometry>
+                                    <EllipseGeometry RadiusX="48" RadiusY="48"/>
+                                </GeometryDrawing.Geometry>
+                            </GeometryDrawing>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </Image.OpacityMask>
+            </Image>
+            <Image x:Name="PendantImage" HorizontalAlignment="Left" Height="168" Margin="0" VerticalAlignment="Top" Width="168"/>
+            <Image x:Name="NameplateImage" HorizontalAlignment="Right" Height="36" VerticalAlignment="Bottom" Width="36"/>
+        </Grid>
+        <TextBlock x:Name="UserInfoBox" HorizontalAlignment="Left" Margin="15,203,0,0" Width="310" Height="62" TextWrapping="Wrap" Text="" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,270,0,0" TextWrapping="Wrap" Text="登录凭据:" VerticalAlignment="Top"/>
+        <TextBlock x:Name="LoginInfoBox" HorizontalAlignment="Left" Margin="15,290,0,0" Width="310" Height="80" TextWrapping="Wrap" Text="" VerticalAlignment="Top"/>
     </Grid>
 </Window>
