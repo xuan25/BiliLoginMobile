@@ -64,7 +64,10 @@ namespace BiliLogin
         public void Stop()
         {
             if (loginListenerThread != null)
+            {
                 loginListenerThread.Abort();
+                loginListenerThread.Join();
+            }
         }
 
         Thread loginListenerThread;
