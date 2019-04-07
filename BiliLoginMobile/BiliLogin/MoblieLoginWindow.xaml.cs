@@ -18,9 +18,16 @@ namespace BiliLogin
         public delegate void ConnectionFailedDel(MoblieLoginWindow sender, WebException ex);
         public event ConnectionFailedDel ConnectionFailed;
 
-        public MoblieLoginWindow()
+        public MoblieLoginWindow(Window parent)
         {
             InitializeComponent();
+            if(parent != null)
+                parent.Closed += Parent_Closed;
+        }
+
+        private void Parent_Closed(object sender, EventArgs e)
+        {
+            this.Close();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

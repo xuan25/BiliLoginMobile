@@ -35,10 +35,11 @@ namespace BiliLogin
         public BiliLoginQR(Window parent)
         {
             isTimeout = false;
-            parent.Closing += Parent_Closing;
+            if(parent != null)
+                parent.Closed += Parent_Closed;
         }
 
-        private void Parent_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Parent_Closed(object sender, EventArgs e)
         {
             Stop();
         }

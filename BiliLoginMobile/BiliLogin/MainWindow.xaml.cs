@@ -20,7 +20,7 @@ namespace BiliLogin
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            MoblieLoginWindow loginWindow = new MoblieLoginWindow();
+            MoblieLoginWindow loginWindow = new MoblieLoginWindow(this);
             loginWindow.LoggedIn += LoginWindow_LoggedIn;
             loginWindow.ConnectionFailed += LoginWindow_ConnectionFailed;
             loginWindow.Show();
