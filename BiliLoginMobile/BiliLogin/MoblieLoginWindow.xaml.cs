@@ -55,7 +55,10 @@ namespace BiliLogin
 
         private void BiliLoginQR_QRImageLoaded(Bitmap qrImage)
         {
-            QrImageBox.Source = BitmapToImageSource(qrImage);
+            Dispatcher.Invoke(new Action(() =>
+            {
+                QrImageBox.Source = BitmapToImageSource(qrImage);
+            }));
         }
 
         private void BiliLoginQR_LoggedIn(CookieCollection cookies)

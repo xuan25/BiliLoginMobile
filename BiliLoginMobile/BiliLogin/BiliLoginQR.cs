@@ -25,6 +25,9 @@ namespace BiliLogin
         public delegate void ConnectionFailedDel(BiliLoginQR sender, WebException ex);
         public event ConnectionFailedDel ConnectionFailed;
 
+        private Thread loginListenerThread;
+        private string OauthKey;
+
         public BiliLoginQR(Window parent)
         {
             parent.Closing += Parent_Closing;
@@ -35,30 +38,11 @@ namespace BiliLogin
             Stop();
         }
 
-        public async void Begin()
+        public void Begin()
         {
-            try
-            {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://passport.bilibili.com/qrcode/getLoginUrl");
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                Stream dataStream = response.GetResponseStream();
-                StreamReader reader = new StreamReader(dataStream);
-                string result = await reader.ReadToEndAsync();
-                reader.Close();
-                response.Close();
-                dataStream.Close();
-
-                dynamic getLoginUrl = JsonParser.Parse(result);
-                LoginUrlRecieved?.Invoke(getLoginUrl.data.url);
-                Bitmap qrBitmap = await RenderQrCodeAsync(getLoginUrl.data.url);
-                QRImageLoaded?.Invoke(qrBitmap);
-                StartLoginListener(getLoginUrl.data.oauthKey);
-            }
-            catch (WebException ex)
-            {
-                ConnectionFailed?.Invoke(this, ex);
-            }
-
+            Stop();
+            loginListenerThread = new Thread(LoginListener);
+            loginListenerThread.Start();
         }
 
         public void Stop()
@@ -70,22 +54,33 @@ namespace BiliLogin
             }
         }
 
-        Thread loginListenerThread;
-        private void StartLoginListener(string oauthKey)
+        public void Init()
         {
-            Stop();
-            loginListenerThread = new Thread(LoginListener);
-            loginListenerThread.Start(oauthKey);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://passport.bilibili.com/qrcode/getLoginUrl");
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            Stream dataStream = response.GetResponseStream();
+            StreamReader reader = new StreamReader(dataStream);
+            string result = reader.ReadToEnd();
+            reader.Close();
+            response.Close();
+            dataStream.Close();
+
+            dynamic getLoginUrl = JsonParser.Parse(result);
+            LoginUrlRecieved?.Invoke(getLoginUrl.data.url);
+            Bitmap qrBitmap = RenderQrCode(getLoginUrl.data.url);
+            QRImageLoaded?.Invoke(qrBitmap);
+            OauthKey = getLoginUrl.data.oauthKey;
         }
 
-        private void LoginListener(object oauthKey)
+        private void LoginListener()
         {
             try
             {
+                Init();
                 while (true)
                 {
                     HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://passport.bilibili.com/qrcode/getLoginInfo");
-                    byte[] data = Encoding.UTF8.GetBytes("oauthKey=" + oauthKey);
+                    byte[] data = Encoding.UTF8.GetBytes("oauthKey=" + OauthKey);
                     request.Method = "POST";
                     request.ContentLength = data.Length;
                     request.ContentType = "application/x-www-form-urlencoded; charset=UTF-8";
@@ -126,13 +121,6 @@ namespace BiliLogin
             QRCode qrCode = new QRCode(qrCodeData);
             Bitmap qrCodeImage = qrCode.GetGraphic(20, Color.Black, Color.White, false);
             return qrCodeImage;
-        }
-
-        private Task<Bitmap> RenderQrCodeAsync(string text)
-        {
-            return Task.Run(() => {
-                return RenderQrCode(text);
-            });
         }
     }
 }
