@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:BiliLogin"
         mc:Ignorable="d"
         xmlns:gif="clr-namespace:WpfAnimatedGif"
-        Title="登录Bilibili" Icon="icon.ico" Height="512" Width="452" BorderThickness="16" WindowStyle="None" AllowsTransparency="True" Background="Transparent" ResizeMode="CanMinimize" Topmost="True" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" Loaded="Window_Loaded">
+        Title="登录Bilibili" Icon="icon.ico" Height="512" Width="452" BorderThickness="16" WindowStyle="None" AllowsTransparency="True" Background="Transparent" ResizeMode="CanMinimize" Topmost="True" ShowInTaskbar="False" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
     <Window.Resources>
         <Storyboard x:Key="ExitBtnMouseEnter">
             <ColorAnimation Storyboard.TargetProperty="(Background).(SolidColorBrush.Color)"
