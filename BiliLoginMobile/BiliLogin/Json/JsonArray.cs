@@ -6,7 +6,7 @@ namespace Json
     /// <summary>
     /// Class <c>JsonArray</c> models an Array in json.
     /// Author: Xuan525
-    /// Date: 21/02/2019
+    /// Date: 07/04/2019
     /// </summary>
     public class JsonArray : DynamicObject
     {
@@ -30,6 +30,35 @@ namespace Json
         public void Add(object value)
         {
             list.Add(value);
+        }
+
+        public override IEnumerable<string> GetDynamicMemberNames()
+        {
+            HashSet<string> set = new HashSet<string>();
+            for (int i = 0; i < list.Count; i++)
+                set.Add(i.ToString());
+            return set;
+        }
+
+        public override bool TryGetMember(GetMemberBinder binder, out object result)
+        {
+            int index = int.Parse(binder.Name);
+            if (index < list.Count)
+            {
+                result = list[index];
+                return true;
+            }
+            else
+            {
+                result = null;
+                return false;
+            }
+        }
+
+        public override bool TrySetMember(SetMemberBinder binder, object value)
+        {
+            list[int.Parse(binder.Name)] = value;
+            return true;
         }
 
         public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)

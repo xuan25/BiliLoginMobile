@@ -6,7 +6,7 @@ namespace Json
     /// <summary>
     /// Class <c>JsonObject</c> models an Object in json.
     /// Author: Xuan525
-    /// Date: 21/02/2019
+    /// Date: 07/04/2019
     /// </summary>
     public class JsonObject : DynamicObject
     {
@@ -31,6 +31,14 @@ namespace Json
         public void Add(string key, object value)
         {
             dictionary.Add(key.ToLower(), value);
+        }
+
+        public override IEnumerable<string> GetDynamicMemberNames()
+        {
+            HashSet<string> set = new HashSet<string>();
+            foreach (KeyValuePair<string, object> p in dictionary)
+                set.Add(p.Key);
+            return set;
         }
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
