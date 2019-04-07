@@ -12,7 +12,7 @@ namespace BiliLogin
     /// </summary>
     public partial class MoblieLoginWindow : Window
     {
-        public delegate void LoggedInDel(MoblieLoginWindow sender, CookieCollection cookies);
+        public delegate void LoggedInDel(MoblieLoginWindow sender, CookieCollection cookies, uint uid);
         public event LoggedInDel LoggedIn;
 
         public delegate void ConnectionFailedDel(MoblieLoginWindow sender, WebException ex);
@@ -53,7 +53,7 @@ namespace BiliLogin
             biliLoginQR.Begin();
         }
 
-        private void BiliLoginQR_QRImageLoaded(Bitmap qrImage)
+        private void BiliLoginQR_QRImageLoaded(BiliLoginQR sender, Bitmap qrImage)
         {
             Dispatcher.Invoke(new Action(() =>
             {
@@ -61,9 +61,9 @@ namespace BiliLogin
             }));
         }
 
-        private void BiliLoginQR_LoggedIn(CookieCollection cookies)
+        private void BiliLoginQR_LoggedIn(BiliLoginQR sender, CookieCollection cookies, uint uid)
         {
-            LoggedIn?.Invoke(this, cookies);
+            LoggedIn?.Invoke(this, cookies, uid);
         }
 
         private void BiliLoginQR_ConnectionFailed(BiliLoginQR sender, WebException ex)

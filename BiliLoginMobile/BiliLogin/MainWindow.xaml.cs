@@ -26,7 +26,7 @@ namespace BiliLogin
             loginWindow.Show();
         }
 
-        private void LoginWindow_LoggedIn(MoblieLoginWindow sender, CookieCollection cookies)
+        private void LoginWindow_LoggedIn(MoblieLoginWindow sender, CookieCollection cookies, uint uid)
         {
             Dispatcher.Invoke(new Action(() =>
             {

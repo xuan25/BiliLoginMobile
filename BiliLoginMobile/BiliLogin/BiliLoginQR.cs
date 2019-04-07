@@ -13,13 +13,13 @@ namespace BiliLogin
 {
     class BiliLoginQR
     {
-        public delegate void LoginUrlRecievedDel(string url);
+        public delegate void LoginUrlRecievedDel(BiliLoginQR sender, string url);
         public event LoginUrlRecievedDel LoginUrlRecieved;
 
-        public delegate void QRImageLoadedDel(Bitmap qrImage);
+        public delegate void QRImageLoadedDel(BiliLoginQR sender, Bitmap qrImage);
         public event QRImageLoadedDel QRImageLoaded;
 
-        public delegate void LoggedInDel(CookieCollection cookies);
+        public delegate void LoggedInDel(BiliLoginQR sender, CookieCollection cookies, uint uid);
         public event LoggedInDel LoggedIn;
 
         public delegate void ConnectionFailedDel(BiliLoginQR sender, WebException ex);
@@ -66,9 +66,9 @@ namespace BiliLogin
             dataStream.Close();
 
             dynamic getLoginUrl = JsonParser.Parse(result);
-            LoginUrlRecieved?.Invoke(getLoginUrl.data.url);
+            LoginUrlRecieved?.Invoke(this, getLoginUrl.data.url);
             Bitmap qrBitmap = RenderQrCode(getLoginUrl.data.url);
-            QRImageLoaded?.Invoke(qrBitmap);
+            QRImageLoaded?.Invoke(this, qrBitmap);
             OauthKey = getLoginUrl.data.oauthKey;
         }
 
@@ -101,7 +101,15 @@ namespace BiliLogin
                     dynamic loginInfo = JsonParser.Parse(result);
                     if (loginInfo.status)
                     {
-                        LoggedIn?.Invoke(cookieCollection);
+                        uint uid = 0;
+                        foreach(Cookie cookie in cookieCollection)
+                        {
+                            if(cookie.Name == "DedeUserID")
+                            {
+                                uid = uint.Parse(cookie.Value);
+                            }
+                        }
+                        LoggedIn?.Invoke(this, cookieCollection, uid);
                         break;
                     }
                     Thread.Sleep(1000);
