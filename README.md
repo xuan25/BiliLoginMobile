@@ -6,4 +6,4 @@ Provide a WPF panel to allow users to log in to bilibili via mobile app
 
 It will return user login cookies and user uid
 
-![screenshot](C:\Users\shanb\Documents\GitHub\BiliLoginMobile\screenshot.png)
+![screenshot](screenshot.png)
