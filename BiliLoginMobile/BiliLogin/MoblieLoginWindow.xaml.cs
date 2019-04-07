@@ -41,6 +41,8 @@ namespace BiliLogin
 
         private void ReloadBtn_Click(object sender, RoutedEventArgs e)
         {
+            QrImageBox.Source = null;
+            ReloadGrid.Visibility = Visibility.Hidden;
             RefreshQRCode();
         }
 
@@ -49,6 +51,7 @@ namespace BiliLogin
             BiliLoginQR biliLoginQR = new BiliLoginQR(this);
             biliLoginQR.QRImageLoaded += BiliLoginQR_QRImageLoaded;
             biliLoginQR.LoggedIn += BiliLoginQR_LoggedIn;
+            biliLoginQR.Timeout += BiliLoginQR_Timeout;
             biliLoginQR.ConnectionFailed += BiliLoginQR_ConnectionFailed;
             biliLoginQR.Begin();
         }
@@ -64,6 +67,14 @@ namespace BiliLogin
         private void BiliLoginQR_LoggedIn(BiliLoginQR sender, CookieCollection cookies, uint uid)
         {
             LoggedIn?.Invoke(this, cookies, uid);
+        }
+
+        private void BiliLoginQR_Timeout(BiliLoginQR sender)
+        {
+            Dispatcher.Invoke(new Action(() =>
+            {
+                ReloadGrid.Visibility = Visibility.Visible;
+            }));
         }
 
         private void BiliLoginQR_ConnectionFailed(BiliLoginQR sender, WebException ex)

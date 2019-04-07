@@ -25,11 +25,16 @@ namespace BiliLogin
         public delegate void ConnectionFailedDel(BiliLoginQR sender, WebException ex);
         public event ConnectionFailedDel ConnectionFailed;
 
+        public delegate void TimeoutDel(BiliLoginQR sender);
+        public event TimeoutDel Timeout;
+
         private Thread loginListenerThread;
-        private string OauthKey;
+        private string oauthKey;
+        private bool isTimeout;
 
         public BiliLoginQR(Window parent)
         {
+            isTimeout = false;
             parent.Closing += Parent_Closing;
         }
 
@@ -69,7 +74,7 @@ namespace BiliLogin
             LoginUrlRecieved?.Invoke(this, getLoginUrl.data.url);
             Bitmap qrBitmap = RenderQrCode(getLoginUrl.data.url);
             QRImageLoaded?.Invoke(this, qrBitmap);
-            OauthKey = getLoginUrl.data.oauthKey;
+            oauthKey = getLoginUrl.data.oauthKey;
         }
 
         private void LoginListener()
@@ -80,7 +85,7 @@ namespace BiliLogin
                 while (true)
                 {
                     HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://passport.bilibili.com/qrcode/getLoginInfo");
-                    byte[] data = Encoding.UTF8.GetBytes("oauthKey=" + OauthKey);
+                    byte[] data = Encoding.UTF8.GetBytes("oauthKey=" + oauthKey);
                     request.Method = "POST";
                     request.ContentLength = data.Length;
                     request.ContentType = "application/x-www-form-urlencoded; charset=UTF-8";
@@ -96,7 +101,6 @@ namespace BiliLogin
                     response.Close();
                     dataStream.Close();
                     postStream.Close();
-                    Console.WriteLine(result);
 
                     dynamic loginInfo = JsonParser.Parse(result);
                     if (loginInfo.status)
@@ -111,6 +115,17 @@ namespace BiliLogin
                         }
                         LoggedIn?.Invoke(this, cookieCollection, uid);
                         break;
+                    }
+                    switch ((int)loginInfo.data)
+                    {
+                        case -2:
+                            if (!isTimeout)
+                            {
+                                isTimeout = true;
+                                Timeout?.Invoke(this);
+                                Stop();
+                            }
+                            break;
                     }
                     Thread.Sleep(1000);
                 }
