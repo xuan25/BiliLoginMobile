@@ -70,7 +70,6 @@ namespace BiliLogin
 
         private BitmapSource BitmapToImageSource(Bitmap bitmap)
         {
-            bitmap.Save("1.jpg");
             IntPtr ip = bitmap.GetHbitmap();
             BitmapSource bitmapSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(ip, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
             return bitmapSource;

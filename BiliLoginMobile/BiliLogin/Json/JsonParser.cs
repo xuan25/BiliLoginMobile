@@ -7,32 +7,32 @@ namespace Json
     /// <summary>
     /// Class <c>JsonParser</c> provides parsing methods for converting json strings to C# objects.
     /// Author: Xuan525
-    /// Date: 28/02/2019
+    /// Date: 08/04/2019
     /// </summary>
     class JsonParser
     {
-        private static object ToValue(string str)
+        private static IJson ToValue(string str)
         {
             if (str.Trim().ToLower() == "null")
                 return null;
             if (str.Trim().ToLower() == "true" || str.Trim().ToLower() == "false")
             {
                 bool.TryParse(str, out bool result);
-                return result;
+                return new JsonBool(result);
             }
             else if (str.Contains("."))
             {
                 double.TryParse(str, out double result);
-                return result;
+                return new JsonDouble(result);
             }
             else
             {
                 long.TryParse(str, out long result);
-                return result;
+                return new JsonLong(result);
             }
         }
 
-        private static object ParseValue(StringReader stringReader)
+        private static IJson ParseValue(StringReader stringReader)
         {
             while (stringReader.Peek() == ' ' || stringReader.Peek() == '\r' || stringReader.Peek() == '\n')
                 stringReader.Read();
@@ -54,23 +54,25 @@ namespace Json
                             stringReader.Read();
                         if (stringReader.Peek() == ',')
                             stringReader.Read();
-                        return value;
+                        return new JsonString(value);
                     }
                     else
                         stringBuilder.Append((char)stringReader.Read());
                 }
-                return stringBuilder.ToString();
+                return new JsonString(stringBuilder.ToString());
             }
             else if (stringReader.Peek() == '{')
             {
                 JsonObject jsonObject = ParseObject(stringReader);
-                while (stringReader.Peek() != -1 && stringReader.Read() != ',') ;
+                while (stringReader.Peek() != -1 && (stringReader.Peek() == ',' ||  stringReader.Peek() == ' ' || stringReader.Peek() == '\r' || stringReader.Peek() == '\n'))
+                    stringReader.Read();
                 return jsonObject;
             }
             else if (stringReader.Peek() == '[')
             {
                 JsonArray jsonArray = ParseArray(stringReader);
-                while (stringReader.Peek() != -1 && stringReader.Read() != ',') ;
+                while (stringReader.Peek() != -1 && (stringReader.Peek() == ',' || stringReader.Peek() == ' ' || stringReader.Peek() == '\r' || stringReader.Peek() == '\n'))
+                    stringReader.Read();
                 return jsonArray;
             }
             else
@@ -94,7 +96,7 @@ namespace Json
                     else
                         stringBuilder.Append((char)stringReader.Read());
                 }
-                return stringBuilder.ToString();
+                return new JsonString(stringBuilder.ToString());
             }
         }
 
@@ -181,7 +183,7 @@ namespace Json
         /// </summary>
         /// <param name="json">Json string</param>
         /// <returns>Json object</returns>
-        public static dynamic Parse(string json)
+        public static IJson Parse(string json)
         {
             if (json == null)
                 return null;

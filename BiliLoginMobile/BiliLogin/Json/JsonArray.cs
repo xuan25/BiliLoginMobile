@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Dynamic;
 
 namespace Json
@@ -6,9 +7,9 @@ namespace Json
     /// <summary>
     /// Class <c>JsonArray</c> models an Array in json.
     /// Author: Xuan525
-    /// Date: 07/04/2019
+    /// Date: 08/04/2019
     /// </summary>
-    public class JsonArray : DynamicObject
+    public class JsonArray : DynamicObject, IEnumerable, IJson
     {
         private List<object> list = new List<object>();
 
@@ -32,33 +33,15 @@ namespace Json
             list.Add(value);
         }
 
-        public override IEnumerable<string> GetDynamicMemberNames()
+        public IEnumerator GetEnumerator()
         {
-            HashSet<string> set = new HashSet<string>();
-            for (int i = 0; i < list.Count; i++)
-                set.Add(i.ToString());
-            return set;
+            return new Enumerator(list);
         }
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            int index = int.Parse(binder.Name);
-            if (index < list.Count)
-            {
-                result = list[index];
-                return true;
-            }
-            else
-            {
-                result = null;
-                return false;
-            }
-        }
-
-        public override bool TrySetMember(SetMemberBinder binder, object value)
-        {
-            list[int.Parse(binder.Name)] = value;
-            return true;
+            result = null;
+            return false;
         }
 
         public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)
@@ -81,6 +64,93 @@ namespace Json
                 list.Add(value);
             }
             return true;
+        }
+
+        public IJson GetValue(object index)
+        {
+            if (list.Count > (int)index)
+                return (IJson)list[(int)index];
+            else
+                throw new System.NullReferenceException();
+        }
+
+        public bool SetValue(object index, object value)
+        {
+            if (list.Count > (int)index)
+                list[(int)index] = value;
+            else
+            {
+                while (list.Count < (int)index)
+                    list.Add(null);
+                list.Add(value);
+            }
+            return true;
+        }
+
+        public bool Contains(object index)
+        {
+            if ((int)index < list.Count)
+                return true;
+            return false;
+        }
+
+        public override string ToString()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public long ToLong()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public double ToDouble()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool ToBool()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public class Enumerator : IEnumerator<object>
+        {
+            private List<object> list;
+            private List<object>.Enumerator enumerator;
+
+            public Enumerator(List<object> list)
+            {
+                this.list = list;
+                this.enumerator = list.GetEnumerator();
+            }
+
+            public object Current => enumerator.Current;
+
+            object IEnumerator.Current
+            {
+                get
+                {
+                    return Current;
+                }
+            }
+
+            public void Dispose()
+            {
+                list = null;
+                enumerator.Dispose();
+            }
+
+            public bool MoveNext()
+            {
+                return enumerator.MoveNext();
+            }
+
+            public void Reset()
+            {
+                enumerator.Dispose();
+                this.enumerator = list.GetEnumerator();
+            }
         }
 
     }

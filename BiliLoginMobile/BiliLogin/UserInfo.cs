@@ -26,23 +26,23 @@ namespace BiliLogin
             response.Close();
             dataStream.Close();
 
-            dynamic json = JsonParser.Parse(result);
+            IJson json = JsonParser.Parse(result);
             UserInfo userInfo = new UserInfo();
-            userInfo.CurrentLevel = (uint)json.data.level_info.current_level;
-            userInfo.CurrentMin = (int)json.data.level_info.current_min;
-            userInfo.CurrentExp = (int)json.data.level_info.current_exp;
-            userInfo.NextExp = (int)json.data.level_info.next_exp;
-            userInfo.BCoins = (int)json.data.bCoins;
-            userInfo.Coins = json.data.coins;
-            userInfo.Face = Regex.Unescape(json.data.face);
-            userInfo.NameplateCurrent = Regex.Unescape(json.data.nameplate_current);
-            userInfo.PendantCurrent = Regex.Unescape(json.data.pendant_current);
-            userInfo.Uname = Regex.Unescape(json.data.uname);
-            userInfo.UserStatus = Regex.Unescape(json.data.userStatus);
-            userInfo.VipType = (uint)json.data.vipType;
-            userInfo.VipStatus = (uint)json.data.vipStatus;
-            userInfo.OfficialVerify = (int)json.data.official_verify;
-            userInfo.PointBalance = (uint)json.data.pointBalance;
+            userInfo.CurrentLevel = (uint)json.GetValue("data").GetValue("level_info").GetValue("current_level").ToLong();
+            userInfo.CurrentMin = (int)json.GetValue("data").GetValue("level_info").GetValue("current_min").ToLong();
+            userInfo.CurrentExp = (int)json.GetValue("data").GetValue("level_info").GetValue("current_exp").ToLong();
+            userInfo.NextExp = (int)json.GetValue("data").GetValue("level_info").GetValue("next_exp").ToLong();
+            userInfo.BCoins = (int)json.GetValue("data").GetValue("bCoins").ToLong();
+            userInfo.Coins = json.GetValue("data").GetValue("coins").ToDouble();
+            userInfo.Face = Regex.Unescape(json.GetValue("data").GetValue("face").ToString());
+            userInfo.NameplateCurrent = Regex.Unescape(json.GetValue("data").GetValue("nameplate_current").ToString());
+            userInfo.PendantCurrent = Regex.Unescape(json.GetValue("data").GetValue("pendant_current").ToString());
+            userInfo.Uname = Regex.Unescape(json.GetValue("data").GetValue("uname").ToString());
+            userInfo.UserStatus = Regex.Unescape(json.GetValue("data").GetValue("userStatus").ToString());
+            userInfo.VipType = (uint)json.GetValue("data").GetValue("vipType").ToLong();
+            userInfo.VipStatus = (uint)json.GetValue("data").GetValue("vipStatus").ToLong();
+            userInfo.OfficialVerify = (int)json.GetValue("data").GetValue("official_verify").ToLong();
+            userInfo.PointBalance = (uint)json.GetValue("data").GetValue("pointBalance").ToLong();
 
             return userInfo;
         }

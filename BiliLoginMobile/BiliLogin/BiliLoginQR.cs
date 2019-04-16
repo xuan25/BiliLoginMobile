@@ -71,11 +71,11 @@ namespace BiliLogin
             response.Close();
             dataStream.Close();
 
-            dynamic getLoginUrl = JsonParser.Parse(result);
-            LoginUrlRecieved?.Invoke(this, getLoginUrl.data.url);
-            Bitmap qrBitmap = RenderQrCode(getLoginUrl.data.url);
+            IJson getLoginUrl = JsonParser.Parse(result);
+            LoginUrlRecieved?.Invoke(this, getLoginUrl.GetValue("data").GetValue("url").ToString());
+            Bitmap qrBitmap = RenderQrCode(getLoginUrl.GetValue("data").GetValue("url").ToString());
             QRImageLoaded?.Invoke(this, qrBitmap);
-            oauthKey = getLoginUrl.data.oauthKey;
+            oauthKey = getLoginUrl.GetValue("data").GetValue("oauthKey").ToString();
         }
 
         private void LoginListener()
@@ -103,8 +103,8 @@ namespace BiliLogin
                     dataStream.Close();
                     postStream.Close();
 
-                    dynamic loginInfo = JsonParser.Parse(result);
-                    if (loginInfo.status)
+                    IJson loginInfo = JsonParser.Parse(result);
+                    if (loginInfo.GetValue("status").ToBool())
                     {
                         uint uid = 0;
                         foreach(Cookie cookie in cookieCollection)
@@ -117,7 +117,7 @@ namespace BiliLogin
                         LoggedIn?.Invoke(this, cookieCollection, uid);
                         break;
                     }
-                    switch ((int)loginInfo.data)
+                    switch ((int)loginInfo.GetValue("data").ToLong())
                     {
                         case -2:
                             if (!isTimeout)
