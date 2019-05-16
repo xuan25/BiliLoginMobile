@@ -55,6 +55,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BiliApi.cs" />
     <Compile Include="BiliLoginQR.cs" />
     <Compile Include="Json\IJson.cs" />
     <Compile Include="Json\JsonArray.cs" />
@@ -65,7 +66,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="QRCoder\AbstractQRCode.cs" />
-    <Compile Include="QRCoder\PayloadGenerator.cs" />
     <Compile Include="QRCoder\QRCode.cs" />
     <Compile Include="QRCoder\QRCodeData.cs" />
     <Compile Include="QRCoder\QRCodeGenerator.cs" />
