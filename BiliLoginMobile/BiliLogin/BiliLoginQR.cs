@@ -6,26 +6,80 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace BiliLogin
 {
+    /// <summary>
+    /// Class <c>BiliLoginQR</c> used to request and listen a login QR code for bilibili.
+    /// Author: Xuan525
+    /// Date: 24/04/2019
+    /// </summary>
     class BiliLoginQR
     {
+        /// <summary>
+        /// LoginUrlRecieved delegate.
+        /// </summary>
+        /// <param name="sender">Seader</param>
+        /// <param name="url">login url</param>
         public delegate void LoginUrlRecievedDel(BiliLoginQR sender, string url);
+        /// <summary>
+        /// Occurs when a login url has been recieved.
+        /// </summary>
         public event LoginUrlRecievedDel LoginUrlRecieved;
 
+        /// <summary>
+        /// QRImageLoaded delegate.
+        /// </summary>
+        /// <param name="sender">Sender</param>
+        /// <param name="qrImage">QR code bitmap</param>
         public delegate void QRImageLoadedDel(BiliLoginQR sender, Bitmap qrImage);
+        /// <summary>
+        /// Occurs when a login QR code has been generated.
+        /// </summary>
         public event QRImageLoadedDel QRImageLoaded;
 
+        /// <summary>
+        /// LoggedIn delegate.
+        /// </summary>
+        /// <param name="sender">Sender</param>
+        /// <param name="cookies">Identity cookie</param>
+        /// <param name="uid">Loged in uid</param>
         public delegate void LoggedInDel(BiliLoginQR sender, CookieCollection cookies, uint uid);
+        /// <summary>
+        /// Occurs when user logged in.
+        /// </summary>
         public event LoggedInDel LoggedIn;
 
+        /// <summary>
+        /// Updated delegate.
+        /// </summary>
+        /// <param name="sender">Sender</param>
+        public delegate void UpdatedDel(BiliLoginQR sender);
+        /// <summary>
+        /// Occurs when a status info has been recieved.
+        /// </summary>
+        public event UpdatedDel Updated;
+
+        /// <summary>
+        /// ConnectionFailed delegate.
+        /// </summary>
+        /// <param name="sender">Seander</param>
+        /// <param name="ex">Exception</param>
         public delegate void ConnectionFailedDel(BiliLoginQR sender, WebException ex);
+        /// <summary>
+        /// Occurs when connection failed.
+        /// </summary>
         public event ConnectionFailedDel ConnectionFailed;
 
+        /// <summary>
+        /// Timeout delegate.
+        /// </summary>
+        /// <param name="sender">Sender</param>
         public delegate void TimeoutDel(BiliLoginQR sender);
+        /// <summary>
+        /// Occurs when the QR code is timeout.
+        /// </summary>
         public event TimeoutDel Timeout;
 
         private Thread loginListenerThread;
@@ -44,6 +98,9 @@ namespace BiliLogin
             Stop();
         }
 
+        /// <summary>
+        /// Begin the login listener.
+        /// </summary>
         public void Begin()
         {
             Stop();
@@ -51,6 +108,9 @@ namespace BiliLogin
             loginListenerThread.Start();
         }
 
+        /// <summary>
+        /// Stop the login listener.
+        /// </summary>
         public void Stop()
         {
             if (loginListenerThread != null)
@@ -60,30 +120,47 @@ namespace BiliLogin
             }
         }
 
-        public void Init()
+        /// <summary>
+        /// Initialize a new login.
+        /// </summary>
+        /// <returns>Successful</returns>
+        public bool Init()
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://passport.bilibili.com/qrcode/getLoginUrl");
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            Stream dataStream = response.GetResponseStream();
-            StreamReader reader = new StreamReader(dataStream);
-            string result = reader.ReadToEnd();
-            reader.Close();
-            response.Close();
-            dataStream.Close();
+            try
+            {
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://passport.bilibili.com/qrcode/getLoginUrl");
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                Stream dataStream = response.GetResponseStream();
+                StreamReader reader = new StreamReader(dataStream);
+                string result = reader.ReadToEnd();
+                reader.Close();
+                response.Close();
+                dataStream.Close();
 
-            IJson getLoginUrl = JsonParser.Parse(result);
-            LoginUrlRecieved?.Invoke(this, getLoginUrl.GetValue("data").GetValue("url").ToString());
-            Bitmap qrBitmap = RenderQrCode(getLoginUrl.GetValue("data").GetValue("url").ToString());
-            QRImageLoaded?.Invoke(this, qrBitmap);
-            oauthKey = getLoginUrl.GetValue("data").GetValue("oauthKey").ToString();
+                IJson getLoginUrl = JsonParser.Parse(result);
+                LoginUrlRecieved?.Invoke(this, getLoginUrl.GetValue("data").GetValue("url").ToString());
+                Bitmap qrBitmap = RenderQrCode(getLoginUrl.GetValue("data").GetValue("url").ToString());
+                QRImageLoaded?.Invoke(this, qrBitmap);
+                oauthKey = getLoginUrl.GetValue("data").GetValue("oauthKey").ToString();
+                return true;
+            }
+            catch (WebException ex)
+            {
+                ConnectionFailed?.Invoke(this, ex);
+                return false;
+            }
+
         }
 
         private void LoginListener()
         {
-            try
+            while(!Init())
             {
-                Init();
-                while (true)
+                Thread.Sleep(5000);
+            }
+            while (true)
+            {
+                try
                 {
                     HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://passport.bilibili.com/qrcode/getLoginInfo");
                     byte[] data = Encoding.UTF8.GetBytes("oauthKey=" + oauthKey);
@@ -107,9 +184,9 @@ namespace BiliLogin
                     if (loginInfo.GetValue("status").ToBool())
                     {
                         uint uid = 0;
-                        foreach(Cookie cookie in cookieCollection)
+                        foreach (Cookie cookie in cookieCollection)
                         {
-                            if(cookie.Name == "DedeUserID")
+                            if (cookie.Name == "DedeUserID")
                             {
                                 uid = uint.Parse(cookie.Value);
                             }
@@ -128,14 +205,14 @@ namespace BiliLogin
                             }
                             break;
                     }
-                    Thread.Sleep(1000);
+                    Updated?.Invoke(this);
                 }
+                catch (WebException ex)
+                {
+                    ConnectionFailed?.Invoke(this, ex);
+                }
+                Thread.Sleep(1000);
             }
-            catch (WebException ex)
-            {
-                ConnectionFailed?.Invoke(this, ex);
-            }
-
         }
 
         private Bitmap RenderQrCode(string text)
